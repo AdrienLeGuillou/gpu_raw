@@ -20,8 +20,11 @@ pub fn rgb_demos(image: &ImageBuffer<Luma<f32>, Vec<f32>>, cfa: &CFAPattern) ->
     for x in 1..width {
         for y in 1..height {
             let vals = (
-                image.get_pixel(x-1, y-1).0[0], image.get_pixel(x, y-1).0[0],
-                image.get_pixel(x-1, y).0[0],   image.get_pixel(x, y).0[0]);
+                image.get_pixel(x-1, y-1).0[0].max(0.0),
+                      image.get_pixel(x, y-1).0[0].max(0.0),
+                image.get_pixel(x-1, y).0[0].max(0.0),
+                      image.get_pixel(x, y).0[0].max(0.0)
+            );
 
             let (r, g, b, g2) = match cfa.get_bayer_pos(x, y) {
                 BayerPos::R => (vals.3, vals.2, vals.0, vals.1),

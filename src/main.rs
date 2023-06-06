@@ -2,6 +2,7 @@ mod raw;
 mod color;
 mod demosaic;
 mod luma_ops;
+mod asc_cdl;
 
 use std::fs::File;
 use std::io::BufWriter;
@@ -20,6 +21,9 @@ async fn run() {
     let raw_img = luma_ops::exposure(&raw_img, 0.7);
 
     let img =  demosaic::rgb_demos(&raw_img, &raw_data.cfa);
+
+    let img = asc_cdl::asc_combined(&img, 1.0, -0.01, 1.0);
+
     let img =  color::to_srgb(&img);
 
     // crate an RGB8 from it and save to jpg
@@ -27,4 +31,3 @@ async fn run() {
     let mut f = BufWriter::new(File::create("test.bmp").unwrap());
     img8b.write_to(&mut f, ImageOutputFormat::Bmp).unwrap();
 }
-
